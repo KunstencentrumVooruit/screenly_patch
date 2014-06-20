@@ -53,10 +53,7 @@
 >         # volgende regel toegevoegd om vooruitpagina te laden
 >         browser_url('file://' + VOORUIT_PAGE, force=force, cb=lambda buf: 'LOAD_FINISH' in buf and VOORUIT_PAGE in buf)
 >     browser_send('js window.setimg("{0}")'.format(browser_url), cb=lambda b: 'COMMAND_EXECUTED' in b and 'setimg' in b)
-194c211
-< 
----
->     logging.info(sh.Command(player_args[0])(*player_args[1:], **player_kwargs))
+
 284c301,303
 <         view_image(HOME + LOAD_SCREEN)
 ---
