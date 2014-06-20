@@ -12,11 +12,13 @@ SCREENLY OSE
 
 Zie comments in file zelf. Belangrijkste aanpassingen:
 
--> loopfunctie
+-> #loopfunctie: eruit gehaald. Te veel problemen met omxplayer
 
 -> update_playlist aangepast omdat assets die in de toekomst gepland staan niet afgespeeld werden
 
 -> zwart scherm met Vooruitlogo om pauzes tussen assets op te vangen
+
+-> voor alle veranderingen: zie patchfile
 
 -> index.haml aangepast om screenshot te tonen
 
@@ -26,6 +28,8 @@ Zie comments in file zelf. Belangrijkste aanpassingen:
 SCREENSHOTS
 
 -> grabScreenshot.c: code via http://www.raspberrypi.org/forums/viewtopic.php?p=376546#p376546
+
+-> apt-get install libvncserver0
 
 -> compileer met  gcc -O3 grabScreenshot.c -o grabScreenshot -DHAVE_LIBBCM_HOST -DUSE_EXTERNAL_LIBBCM_HOST -DUSE_VCHIQ_ARM -Wno-psabi -I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux -L/opt/vc/lib/ -lGLESv2 -lEGL
 
