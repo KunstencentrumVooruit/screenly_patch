@@ -1,0 +1,130 @@
+27a28,31
+> # HTML_templates.py genereert een html+javascriptpagina met een functie die on-the-fly 
+> # een image kan laden (browser_send(uri)). Clear_browser modified zodat loadingPlusVooruit getoond wordt
+> # ipv een zwart scherm.
+> VOORUIT_PAGE = '/home/pi/screenly/loadingPlusVooruit.jpg'
+58,59c62,71
+<         self.update_playlist()
+< 
+---
+>         self.index = 0
+>         self.update_playlist(True)
+>         self.inLoop=False
+>     # Volgende 3 functies toegevoegd   
+>     def get_n_assets(self):
+>         return self.nassets
+>     def set_inLoop(self, bool):
+>         self.inLoop = bool
+>     def get_inLoop(self):
+>         return self.inLoop
+72c84,88
+< 
+---
+>     # Probleem hier was dat playlist wel werd geüpdatet na databasemodificatie, maar een asset die in de toekomst
+>     # gepland staat niet werd gestart. Oplossing: update_playlist gewoon altijd doen, maar hierdoor wordt index ook
+>     # steeds gereset waardoor alleen de eerste asset werd afgespeeld. Dan maar een update_playlist(True/False) ingelast
+>     # waarbij de counter alleen gereset wordt na databasemodificatie (dus als er effectief ook iets veranderd is). Bon.
+>     
+76c92,93
+<         logging.debug('refresh: counter: (%s) deadline (%s) timecur (%s)', self.counter, self.deadline, time_cur)
+---
+>         logging.info('refresh: counter: (%s) deadline (%s) timecur (%s)', self.counter, self.deadline, time_cur)
+>         logging.info(self.get_db_mtime())
+79c96
+<             self.update_playlist()
+---
+>             self.update_playlist(True)
+81c98
+<             self.update_playlist()
+---
+>             self.update_playlist(True)
+83c100,102
+<             self.update_playlist()
+---
+>             self.update_playlist(True)
+>         self.update_playlist(False)
+>     
+85c104
+<     def update_playlist(self):
+---
+>     def update_playlist(self,bool):
+91c110,111
+<         self.index = 0
+---
+>         if bool == True:
+>             self.index = 0
+113c133
+< 
+---
+> # principe van watchdog: programma schrijft af en toe naar file, die op zijn beurt gecontroleerd wordt door watchdog service
+160a181,183
+>     # volgende regel toegevoegd om vooruitpagina te laden
+>     browser_send('js window.setimg("{0}")'.format(VOORUIT_PAGE), cb=lambda b: 'COMMAND_EXECUTED' in b and 'setimg' in b)
+>     
+175a199
+>     logging.info('In image loop')
+179c203
+< def view_video(uri, duration):
+---
+> def view_video(uri, duration,scheduler):
+192a217,224
+>     # Toegevoegd. Overschrijft args en kwargs van hierboven, maar toch niet echt nuttig
+>     # schedulerobject wordt meegegeven zodat kan gecheckt worden of dinges in loop moet of niet
+>     if scheduler.get_inLoop() == True:
+>         player_args = ['omxplayer', uri, '--loop'] 
+>     else:
+>          player_args = ['omxplayer', uri]
+>     player_kwargs = {'_bg': True}
+>            
+194d225
+< 
+196,202c227,237
+<     while run.process.alive:
+<         watchdog()
+<         sleep(1)
+<     if run.exit_code == 124:
+<         logging.error('omxplayer timed out')
+< 
+< 
+---
+>     # if toegevoegd. Wachten op einde proces alleen nodig indien niet in loop, anders blijft programma hangen
+>     if scheduler.get_inLoop() == False:
+>         while run.process.alive:
+>             watchdog()
+>             sleep(1)
+>     else:
+>         sleep(10)
+>     # Onderstaande moet weg, anders wacht prg op exit code -> doet niet meer verder
+>     #if run.exit_code == 124:
+>     #    logging.error('omxplayer timed out')
+>     
+292c327,331
+< 
+---
+>         # Procedure om loop stop te zetten
+>         if scheduler.get_n_assets() > 1:
+>             if scheduler.get_inLoop() == True:
+>                 run = sh.killall('omxplayer')
+>                 scheduler.set_inLoop(False)
+298c337,350
+<             view_video(uri, asset['duration'])
+---
+>             
+>             # Als er juist 1 videoasset is: checken of ie al in loop staat, anders gewoon doen!
+>             if scheduler.get_n_assets() == 1:
+>                 if scheduler.get_inLoop() == False:
+>                     logging.info('Playing video in loop')
+>                     scheduler.set_inLoop(True)
+>                     
+>             else:
+>                 logging.info('Playing video')
+>                 scheduler.set_inLoop(False)
+>             # schedulerobject toegevoegd
+>             view_video(uri, asset['duration'],scheduler)    
+>                 
+>         
+344c396
+<     main()
+\ No newline at end of file
+---
+>     main()

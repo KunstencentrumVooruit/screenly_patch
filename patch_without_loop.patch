@@ -1,0 +1,67 @@
+27a28,31
+> # HTML_templates.py genereert een html+javascriptpagina met een functie die on-the-fly 
+> # een image kan laden (browser_send(uri)). Clear_browser modified zodat loadingPlusVooruit getoond wordt
+> # ipv een zwart scherm.
+> VOORUIT_PAGE = '/home/pi/screenly/loadingPlusVooruit.jpg'
+58c62
+<         self.update_playlist()
+---
+>         self.update_playlist(True)
+72a77,80
+>     # Probleem hier was dat playlist wel werd geüpdatet na databasemodificatie, maar een asset die in de toekomst
+>     # gepland staat niet werd gestart. Oplossing: update_playlist gewoon altijd doen, maar hierdoor wordt index ook
+>     # steeds gereset waardoor alleen de eerste asset werd afgespeeld. Dan maar een update_playlist(True/False) ingelast
+>     # waarbij de counter alleen gereset wordt na databasemodificatie (dus als er effectief ook iets veranderd is). Bon.
+79c87
+<             self.update_playlist()
+---
+>             self.update_playlist(True)
+81c89
+<             self.update_playlist()
+---
+>             self.update_playlist(True)
+83c91,93
+<             self.update_playlist()
+---
+>             self.update_playlist(True)
+>         else:
+>             self.update_playlist(False)
+85c95
+<     def update_playlist(self):
+---
+>     def update_playlist(self,bool):
+91c101,102
+<         self.index = 0
+---
+>         if bool == True:
+>             self.index = 0
+157,161c168,178
+< 
+< def browser_clear(force=False):
+<     """Load a black page. Default cb waits for the page to load."""
+<     browser_url('file://' + BLACK_PAGE, force=force, cb=lambda buf: 'LOAD_FINISH' in buf and BLACK_PAGE in buf)
+< 
+---
+> # functie uitgebreid met black=False argument: indien black True wordt browser geladen met zwarte pagina (opgeroepen
+> # vanuit functie asset_loop, als assets=None, ipv view_image). Indien meerdere assets: zwarte pagina met Vooruitlogo.
+> def browser_clear(force=False,black=False):
+> 
+>     if black == True:
+>         """Load a black page. Default cb waits for the page to load."""
+>         browser_url('file://' + BLACK_PAGE, force=force, cb=lambda buf: 'LOAD_FINISH' in buf and BLACK_PAGE in buf)
+>     else:
+>         # volgende regel toegevoegd om vooruitpagina te laden
+>         browser_url('file://' + VOORUIT_PAGE, force=force, cb=lambda buf: 'LOAD_FINISH' in buf and VOORUIT_PAGE in buf)
+>     browser_send('js window.setimg("{0}")'.format(browser_url), cb=lambda b: 'COMMAND_EXECUTED' in b and 'setimg' in b)
+194c211
+< 
+---
+>     logging.info(sh.Command(player_args[0])(*player_args[1:], **player_kwargs))
+284c301,303
+<         view_image(HOME + LOAD_SCREEN)
+---
+>         # zwarte pagina in browser tonen ipv view_image
+>         #view_image(HOME + LOAD_SCREEN)
+>         browser_clear(force=True,black=True)
+335a355
+>         
