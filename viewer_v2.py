@@ -208,7 +208,7 @@ def view_video(uri, duration):
         player_args = ['timeout', VIDEO_TIMEOUT + int(duration.split('.')[0])] + player_args
 
     run = sh.Command(player_args[0])(*player_args[1:], **player_kwargs)
-    logging.info(sh.Command(player_args[0])(*player_args[1:], **player_kwargs))
+    
     browser_clear(force=True)
     while run.process.alive:
         watchdog()
