@@ -43,4 +43,10 @@ OMXPLAYER LOOP
 
 -> http://omxplayer.sconde.net/ (eerste .deb!)
 
+3) installeer patch
 
+curl -sL https://raw.githubusercontent.com/vooruit/screenly_patch/master/patch.sh | bash
+
+4) API
+
+-> nieuwe asset (fileupload nog te checken): curl --data "name=test&uri=/eeeeeee&mimetype=video" http://192.168.2.50:8080/api/assets
