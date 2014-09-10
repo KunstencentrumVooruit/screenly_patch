@@ -13,7 +13,7 @@ cd ..
 mv tools /home/pi/
 
 # crontab lijn toevoegen met sed. Via echo permission denied
-sudo sed -i '$ a\*/1 * * * root /home/pi/tools/grabScreenshot.sh' /etc/crontab
+sudo sed -i '$ a\*/1 * * * * root /home/pi/tools/grabScreenshot.sh' /etc/crontab
 sudo /etc/init.d/cron restart
 
 cp index.haml ../screenly/views
