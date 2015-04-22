@@ -50,7 +50,7 @@ curl -sL https://raw.githubusercontent.com/vooruit/screenly_patch/master/patch.s
 4) API
 
 -> nieuwe asset (fileupload nog te checken):
-> > curl --data-binary "@postdata" http://192.168.2.60:8080/api/assets/580c92e07cb34c7d96950f9cdb01c88a
+> > curl --data-binary "@postdata" http://192.168.2.60:8080/api/assets
 
 -> update bestaande asset:
 > curl --data-binary "@postdata" http://192.168.2.60:8080/api/assets/580c92e07cb34c7d96950f9cdb01c88a
