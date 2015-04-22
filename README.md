@@ -49,4 +49,14 @@ curl -sL https://raw.githubusercontent.com/vooruit/screenly_patch/master/patch.s
 
 4) API
 
--> nieuwe asset (fileupload nog te checken): curl --data "name=test&uri=/eeeeeee&mimetype=video" http://192.168.2.50:8080/api/assets
+-> nieuwe asset (fileupload nog te checken):
+> > curl --data-binary "@postdata" http://192.168.2.60:8080/api/assets/580c92e07cb34c7d96950f9cdb01c88a
+
+-> update bestaande asset:
+> curl --data-binary "@postdata" http://192.168.2.60:8080/api/assets/580c92e07cb34c7d96950f9cdb01c88a
+
+@postdata:
+``` 
+name=wim2&mimetype=image&uri=%2Fhome%2Fpi%2Fscreenly_assets%2F10b8eb1354be48cbaa228a749c6fb841&is_active=false&start_date=2015-03-04T19%3A00%3A00.000Z&end_date=2015-03-03T20%3A00%3A00.000Z&duration=0&is_enabled=0&nocache=0
+```
+
